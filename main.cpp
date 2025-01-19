@@ -314,7 +314,7 @@ __attribute__((optnone)) __attribute__((naked)) void LRPPatch01(void)
     asm volatile(
         "MOV X0, %0\n"
     :: "r" (pLRPBackTo1));
-    asm volatile("ADD SP, SP, #8\nPOP {R0-R11}");
+    asm volatile("ADD SP, SP, #8");
     asm volatile("BR X0");
 }
 #endif
