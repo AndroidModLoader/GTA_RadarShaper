@@ -334,7 +334,7 @@ __attribute__((optnone)) __attribute__((naked)) void LRPPatch03(void)
     asm volatile("SUB SP, SP, #16");
     asm volatile("STR S2, [SP, #0]\nSTR S1, [SP, #4]\nSTR W8, [SP, #8]");
     asm volatile("MOV X0, SP\nBL LRPSwitch");
-    asm volatile("FMOV S6, S0\nLDR S2, [SP, #0]\nLDR S1, [SP, #4]");
+    asm volatile("FMOV S3, S0\nLDR S2, [SP, #0]\nLDR S1, [SP, #4]\nFMOV S0, #1.0");
     asm volatile(
         "MOV X0, %0\n"
     :: "r" (pLRPBackTo3));
