@@ -317,6 +317,30 @@ __attribute__((optnone)) __attribute__((naked)) void LRPPatch01(void)
     asm volatile("ADD SP, SP, #8");
     asm volatile("BR X0");
 }
+__attribute__((optnone)) __attribute__((naked)) void LRPPatch02(void)
+{
+    asm volatile("SUB SP, SP, #8");
+    asm volatile("STR S1, [SP, #0]\nSTR S0, [SP, #4]");
+    asm volatile("MOV X0, SP\nBL LRPSwitch");
+    asm volatile("LDR S1, [SP, #0]\nLDR S0, [SP, #4]");
+    asm volatile(
+        "MOV X0, %0\n"
+    :: "r" (pLRPBackTo2));
+    asm volatile("ADD SP, SP, #8");
+    asm volatile("BR X0");
+}
+__attribute__((optnone)) __attribute__((naked)) void LRPPatch03(void)
+{
+    asm volatile("SUB SP, SP, #8");
+    asm volatile("STR S2, [SP, #0]\nSTR S1, [SP, #4]");
+    asm volatile("MOV X0, SP\nBL LRPSwitch");
+    asm volatile("LDR S2, [SP, #0]\nLDR S1, [SP, #4]");
+    asm volatile(
+        "MOV X0, %0\n"
+    :: "r" (pLRPBackTo3));
+    asm volatile("ADD SP, SP, #8");
+    asm volatile("BR X0");
+}
 #endif
 // UltraDumbPatches :)
 
@@ -402,6 +426,12 @@ extern "C" void OnAllModsLoaded()
         
         pLRPBackTo1 = pGame + 0x524388;
         aml->Redirect(pGame + 0x524368, (uintptr_t)LRPPatch01);
+        
+        pLRPBackTo2 = pGame + 0x524504;
+        aml->Redirect(pGame + 0x5244E4, (uintptr_t)LRPPatch02);
+        
+        pLRPBackTo3 = pGame + 0x525034;
+        aml->Redirect(pGame + 0x525018, (uintptr_t)LRPPatch03);
       #endif
     }
     else if((hGame = aml->GetLibHandle("libGTAVC.so")) && (pGame = aml->GetLib("libGTAVC.so")))
