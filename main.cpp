@@ -307,38 +307,38 @@ __attribute__((optnone)) __attribute__((naked)) void MaskPatch(void)
 }
 __attribute__((optnone)) __attribute__((naked)) void LRPPatch01(void)
 {
-    asm volatile("STR X8, [SP, #-16]!\nSUB SP, SP, #16");
-    asm volatile("STR S1, [SP, #0]\nSTR S0, [SP, #4]");
+    asm volatile("SUB SP, SP, #16");
+    asm volatile("STR S1, [SP, #0]\nSTR S0, [SP, #4]\nSTR W8, [SP, #8]");
     asm volatile("MOV X0, SP\nBL LRPSwitch");
     asm volatile("LDR S1, [SP, #0]\nLDR S0, [SP, #4]");
     asm volatile(
         "MOV X0, %0\n"
     :: "r" (pLRPBackTo1));
-    asm volatile("ADD SP, SP, #16\nLDR X8, [SP], #16");
+    asm volatile("LDR W8, [SP, #8]\nADD SP, SP, #16");
     asm volatile("BR X0");
 }
 __attribute__((optnone)) __attribute__((naked)) void LRPPatch02(void)
 {
-    asm volatile("STR X8, [SP, #-16]!\nSUB SP, SP, #16");
-    asm volatile("STR S1, [SP, #0]\nSTR S0, [SP, #4]");
+    asm volatile("SUB SP, SP, #16");
+    asm volatile("STR S1, [SP, #0]\nSTR S0, [SP, #4]\nSTR W8, [SP, #8]");
     asm volatile("MOV X0, SP\nBL LRPSwitch");
     asm volatile("LDR S1, [SP, #0]\nLDR S0, [SP, #4]");
     asm volatile(
         "MOV X0, %0\n"
     :: "r" (pLRPBackTo2));
-    asm volatile("ADD SP, SP, #16\nLDR X8, [SP], #16");
+    asm volatile("LDR W8, [SP, #8]\nADD SP, SP, #16");
     asm volatile("BR X0");
 }
 __attribute__((optnone)) __attribute__((naked)) void LRPPatch03(void)
 {
-    asm volatile("STR X8, [SP, #-16]!\nSUB SP, SP, #16");
-    asm volatile("STR S2, [SP, #0]\nSTR S1, [SP, #4]");
+    asm volatile("SUB SP, SP, #16");
+    asm volatile("STR S2, [SP, #0]\nSTR S1, [SP, #4]\nSTR W8, [SP, #8]");
     asm volatile("MOV X0, SP\nBL LRPSwitch");
-    asm volatile("LDR S2, [SP, #0]\nLDR S1, [SP, #4]");
+    asm volatile("FMOV S6, S0\nLDR S2, [SP, #0]\nLDR S1, [SP, #4]");
     asm volatile(
         "MOV X0, %0\n"
     :: "r" (pLRPBackTo3));
-    asm volatile("ADD SP, SP, #16\nLDR X8, [SP], #16");
+    asm volatile("LDR W8, [SP, #8]\nADD SP, SP, #16");
     asm volatile("BR X0");
 }
 #endif
