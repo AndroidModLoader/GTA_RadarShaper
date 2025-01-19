@@ -302,9 +302,8 @@ __attribute__((optnone)) __attribute__((naked)) void LRPPatch05(void)
 #else
 __attribute__((optnone)) __attribute__((naked)) void MaskPatch(void)
 {
-    /*asm volatile("ADD.W R0, R8, #8\nSTR R0, [SP,#0x18]\nMOVS R1, #0\nVMOV.F32 S20, #6.0"); // org
-    asm volatile("PUSH {R0-R1}\nBL RadarMaskSwitch\nMOV R12, R0\nPOP {R0-R1}");
-    asm volatile("BX R12");*/
+    asm volatile("LDR S10, [X8, #0xA20]\nLDR X26, [X26, #0xFA0]\nMOV X23, XZR\nADD X19, X19, #8"); // org
+    asm volatile("BL RadarMaskSwitch\nBR X0");
 }
 #endif
 // UltraDumbPatches :)
@@ -385,7 +384,9 @@ extern "C" void OnAllModsLoaded()
       #else
         aml->Redirect(pGame + 0x524B2C, (uintptr_t)LRPSwitch);
         
-        
+        pMaskBackTo = pGame + 0x529720;
+        pMaskContinueBackTo = pGame + 0x5295B8;
+        aml->Redirect(pGame + 0x5295A8, (uintptr_t)MaskPatch);
       #endif
     }
     else if((hGame = aml->GetLibHandle("libGTAVC.so")) && (pGame = aml->GetLib("libGTAVC.so")))
