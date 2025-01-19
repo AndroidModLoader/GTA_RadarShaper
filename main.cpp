@@ -410,6 +410,8 @@ extern "C" void OnAllModsLoaded()
     {
         cfg = new Config("RadarShapeR.SA");
 
+        aml->Hook(aml->GetSym(hGame, "_ZN6CRadar15LimitRadarPointER9CVector2D"), (void*)LRPSwitch, NULL);
+
         SET_TO(SetMaskVertices, aml->GetSym(hGame, "_ZN9CSprite2d15SetMaskVerticesEiPff"));
         SET_TO(RenderIndexedPrimitive, aml->GetSym(hGame, "_Z35RwIm2DRenderIndexedPrimitive_BUGFIX15RwPrimitiveTypeP14RwOpenGLVertexiPti"));
         SET_TO(TransformRadarPointToScreenSpace, aml->GetSym(hGame, "_ZN6CRadar32TransformRadarPointToScreenSpaceER9CVector2DRKS0_"));
@@ -419,7 +421,7 @@ extern "C" void OnAllModsLoaded()
         SET_TO(NearScreenZ, aml->GetSym(hGame, "_ZN9CSprite2d11NearScreenZE"));
 
       #ifdef AML32
-        aml->Redirect(pGame + 0x43F710 + 0x1, (uintptr_t)LRPSwitch);
+        //aml->Redirect(pGame + 0x43F710 + 0x1, (uintptr_t)LRPSwitch);
 
         aml->Write(pGame + 0x4442B0, "\x00\x21", 2);
         aml->Write(pGame + 0x4442BA, "\x7A\x48", 2);
@@ -442,7 +444,7 @@ extern "C" void OnAllModsLoaded()
         pLRPBackTo5 = pGame + 0x440AD6 + 0x1;
         aml->Redirect(pGame + 0x440AAE + 0x1, (uintptr_t)LRPPatch05);
       #else
-        aml->Redirect(pGame + 0x524B2C, (uintptr_t)LRPSwitch);
+        //aml->Redirect(pGame + 0x524B2C, (uintptr_t)LRPSwitch);
         
         pMaskBackTo = pGame + 0x529720;
         pMaskContinueBackTo = pGame + 0x5295B8;
