@@ -62,7 +62,7 @@ void (*RenderIndexedPrimitive)(int, void*, int, uint16_t*, int);
 void (*TransformRadarPointToScreenSpace)(GtaVec2d&, GtaVec2d&);
 
 // Mod desc
-MYMOD(net.rusjj.radarshaper, Radar ShapeR, 1.0, RusJJ)
+MYMOD(net.rusjj.radarshaper, Radar ShapeR, 1.1, RusJJ)
 BEGIN_DEPLIST()
     ADD_DEPENDENCY_VER(net.rusjj.aml, 1.1)
 END_DEPLIST()
@@ -81,6 +81,7 @@ inline void ClampToRectCenter(float width, float height, GtaVec2d& vec)
 }
 inline void ToggleRadarOutline(bool enable)
 {
+  #ifdef AML32
     if(enable)
     {
         aml->Write(pGame + 0x437F14, "\x65\xF5\x0C\xEB", 4);
@@ -95,6 +96,16 @@ inline void ToggleRadarOutline(bool enable)
         aml->Write(pGame + 0x437F74, "\xAF\xF3\x00\x80", 4);
         aml->Write(pGame + 0x437FA0, "\xAF\xF3\x00\x80", 4);
     }
+  #else
+    if(enable)
+    {
+        
+    }
+    else
+    {
+        
+    }
+  #endif
 }
 inline float Dist2D(float x, float y)
 {
@@ -214,6 +225,7 @@ extern "C" uintptr_t RadarMaskSwitch()
     return pMaskBackTo;
 }
 
+#ifdef AML32
 // UltraDumbPatches :(
 __attribute__((optnone)) __attribute__((naked)) void MaskPatch(void)
 {
@@ -282,9 +294,12 @@ __attribute__((optnone)) __attribute__((naked)) void LRPPatch05(void)
     asm volatile("BX R12");
 }
 // UltraDumbPatches :)
+#else
+
+#endif
 
 // Configs
-char szRetScale[12];
+char szRetScale[16];
 const char* OnRadarScaleDraw(int newVal, void* data)
 {
     sprintf(szRetScale, "x%.2f", 0.01f * newVal);
@@ -333,6 +348,7 @@ extern "C" void OnAllModsLoaded()
         SET_TO(bDrawRadarMap, pGame + 0x6E00D8);
         SET_TO(NearScreenZ, aml->GetSym(hGame, "_ZN9CSprite2d11NearScreenZE"));
 
+      #ifdef AML32
         aml->Redirect(pGame + 0x43F710 + 0x1, (uintptr_t)LRPSwitch);
 
         aml->Write(pGame + 0x4442B0, "\x00\x21", 2);
@@ -355,6 +371,9 @@ extern "C" void OnAllModsLoaded()
 
         pLRPBackTo5 = pGame + 0x440AD6 + 0x1;
         aml->Redirect(pGame + 0x440AAE + 0x1, (uintptr_t)LRPPatch05);
+      #else
+        
+      #endif
     }
     else if((hGame = aml->GetLibHandle("libGTAVC.so")) && (pGame = aml->GetLib("libGTAVC.so")))
     {
