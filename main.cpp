@@ -410,7 +410,7 @@ extern "C" void OnAllModsLoaded()
     {
         cfg = new Config("RadarShapeR.SA");
 
-        aml->Hook(aml->GetSym(hGame, "_ZN6CRadar15LimitRadarPointER9CVector2D"), (void*)LRPSwitch, NULL);
+        aml->Hook((void*)aml->GetSym(hGame, "_ZN6CRadar15LimitRadarPointER9CVector2D"), (void*)LRPSwitch, NULL);
 
         SET_TO(SetMaskVertices, aml->GetSym(hGame, "_ZN9CSprite2d15SetMaskVerticesEiPff"));
         SET_TO(RenderIndexedPrimitive, aml->GetSym(hGame, "_Z35RwIm2DRenderIndexedPrimitive_BUGFIX15RwPrimitiveTypeP14RwOpenGLVertexiPti"));
