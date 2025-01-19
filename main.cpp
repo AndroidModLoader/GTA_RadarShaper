@@ -99,11 +99,17 @@ inline void ToggleRadarOutline(bool enable)
   #else
     if(enable)
     {
-        
+        aml->Write(pGame + 0x51D494, "\x2B\x40\xF4\x97", 4);
+        aml->Write(pGame + 0x51D4C8, "\x1E\x40\xF4\x97", 4);
+        aml->Write(pGame + 0x51D4FC, "\x11\x40\xF4\x97", 4);
+        aml->Write(pGame + 0x51D52C, "\x05\x40\xF4\x97", 4);
     }
     else
     {
-        
+        aml->Write(pGame + 0x51D494, "\x1F\x20\x03\xD5", 4);
+        aml->Write(pGame + 0x51D4C8, "\x1F\x20\x03\xD5", 4);
+        aml->Write(pGame + 0x51D4FC, "\x1F\x20\x03\xD5", 4);
+        aml->Write(pGame + 0x51D52C, "\x1F\x20\x03\xD5", 4);
     }
   #endif
 }
@@ -225,8 +231,8 @@ extern "C" uintptr_t RadarMaskSwitch()
     return pMaskBackTo;
 }
 
-#ifdef AML32
 // UltraDumbPatches :(
+#ifdef AML32
 __attribute__((optnone)) __attribute__((naked)) void MaskPatch(void)
 {
     asm volatile("ADD.W R0, R8, #8\nSTR R0, [SP,#0x18]\nMOVS R1, #0\nVMOV.F32 S20, #6.0"); // org
@@ -293,10 +299,15 @@ __attribute__((optnone)) __attribute__((naked)) void LRPPatch05(void)
     asm volatile("ADD SP, SP, #8\nPOP {R0-R11}");
     asm volatile("BX R12");
 }
-// UltraDumbPatches :)
 #else
-
+__attribute__((optnone)) __attribute__((naked)) void MaskPatch(void)
+{
+    /*asm volatile("ADD.W R0, R8, #8\nSTR R0, [SP,#0x18]\nMOVS R1, #0\nVMOV.F32 S20, #6.0"); // org
+    asm volatile("PUSH {R0-R1}\nBL RadarMaskSwitch\nMOV R12, R0\nPOP {R0-R1}");
+    asm volatile("BX R12");*/
+}
 #endif
+// UltraDumbPatches :)
 
 // Configs
 char szRetScale[16];
@@ -307,7 +318,7 @@ const char* OnRadarScaleDraw(int newVal, void* data)
 }
 void OnRadarSettingChange(int oldVal, int newVal, void* data)
 {
-    switch((int)data)
+    switch((int)(intptr_t)data)
     {
         case 0:
             ToggleRadarOutline(newVal);
@@ -345,7 +356,7 @@ extern "C" void OnAllModsLoaded()
         SET_TO(TransformRadarPointToScreenSpace, aml->GetSym(hGame, "_ZN6CRadar32TransformRadarPointToScreenSpaceER9CVector2DRKS0_"));
 
         SET_TO(maskVertices, aml->GetSym(hGame, "_ZN9CSprite2d10maVerticesE"));
-        SET_TO(bDrawRadarMap, pGame + 0x6E00D8);
+        SET_TO(bDrawRadarMap, pGame + BYBIT(0x6E00D8, 0x8BE80C));
         SET_TO(NearScreenZ, aml->GetSym(hGame, "_ZN9CSprite2d11NearScreenZE"));
 
       #ifdef AML32
@@ -372,6 +383,8 @@ extern "C" void OnAllModsLoaded()
         pLRPBackTo5 = pGame + 0x440AD6 + 0x1;
         aml->Redirect(pGame + 0x440AAE + 0x1, (uintptr_t)LRPPatch05);
       #else
+        aml->Redirect(pGame + 0x524B2C, (uintptr_t)LRPSwitch);
+        
         
       #endif
     }
