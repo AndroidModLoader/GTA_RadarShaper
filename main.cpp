@@ -308,13 +308,13 @@ __attribute__((optnone)) __attribute__((naked)) void MaskPatch(void)
 __attribute__((optnone)) __attribute__((naked)) void LRPPatch01(void)
 {
     asm volatile("SUB SP, SP, #16");
-    asm volatile("STR S1, [SP, #0]\nSTR S0, [SP, #4]\nSTR W8, [SP, #8]");
+    asm volatile("STR S1, [SP, #0]\nSTR S0, [SP, #4]");
     asm volatile("MOV X0, SP\nBL LRPSwitch");
     asm volatile("LDR S1, [SP, #0]\nLDR S0, [SP, #4]");
     asm volatile(
         "MOV X0, %0\n"
     :: "r" (pLRPBackTo1));
-    asm volatile("LDR W8, [SP, #8]\nADD SP, SP, #16");
+    asm volatile("ADD SP, SP, #16");
     asm volatile("BR X0");
 }
 __attribute__((optnone)) __attribute__((naked)) void LRPPatch02(void)
@@ -448,8 +448,8 @@ extern "C" void OnAllModsLoaded()
         pMaskContinueBackTo = pGame + 0x5295B8;
         aml->Redirect(pGame + 0x5295A8, (uintptr_t)MaskPatch);
         
-        pLRPBackTo1 = pGame + 0x524388;
-        aml->Redirect(pGame + 0x524368, (uintptr_t)LRPPatch01);
+        pLRPBackTo1 = pGame + 0x524068;
+        aml->Redirect(pGame + 0x524048, (uintptr_t)LRPPatch01);
         
         pLRPBackTo2 = pGame + 0x524504;
         aml->Redirect(pGame + 0x5244E4, (uintptr_t)LRPPatch02);
