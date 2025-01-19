@@ -455,7 +455,7 @@ extern "C" void OnAllModsLoaded()
         aml->Redirect(pGame + 0x5244E4, (uintptr_t)LRPPatch02);
         
         pLRPBackTo3 = pGame + 0x525034;
-        aml->Redirect(pGame + 0x525018, (uintptr_t)LRPPatch03);
+        aml->Redirect(pGame + 0x525010, (uintptr_t)LRPPatch03);
         
         pLRPBackTo4 = pGame + 0x525A7C;
         aml->Redirect(pGame + 0x525A58, (uintptr_t)LRPPatch04);
