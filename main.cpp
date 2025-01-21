@@ -10,6 +10,8 @@ ISAUtils* sautils = NULL;
 #define sizeofA(__aVar)     ( (int)(sizeof(__aVar)/sizeof(__aVar[0])) )
 #define TO_RAD(__an)        ( (float)(__an) * (float)M_PI / 180.0f )
 #define TO_DEG(__an)        ( (float)(__an) * 180.0f / M_PI)
+#define SLIDER_SEGMENTS     ( 100 )
+#define SLIDER_SEGMENTS_DIV ( (float) 1.0f / (float)( SLIDER_SEGMENTS ) )
 
 // Enums
 enum eRadarShape : uint8_t
@@ -372,7 +374,7 @@ __attribute__((optnone)) __attribute__((naked)) void LRPPatch05(void)
 char szRetScale[16];
 const char* OnRadarScaleDraw(int newVal, void* data)
 {
-    sprintf(szRetScale, "x%.2f", 0.01f * newVal);
+    sprintf(szRetScale, "x%.2f", SLIDER_SEGMENTS_DIV * newVal);
     return szRetScale;
 }
 void OnRadarSettingChange(int oldVal, int newVal, void* data)
@@ -389,12 +391,12 @@ void OnRadarSettingChange(int oldVal, int newVal, void* data)
             nRadarShape = (eRadarShape)cfgRadarShape->GetInt();
             break;
         case 2:
-            cfgRadarRectX->SetFloat(0.01f * newVal);
+            cfgRadarRectX->SetFloat(SLIDER_SEGMENTS_DIV * newVal);
             cfgRadarRectX->Clamp(0.05f, 1.0f);
             RadarRect.x = cfgRadarRectX->GetFloat();
             break;
         case 3:
-            cfgRadarRectY->SetFloat(0.01f * newVal);
+            cfgRadarRectY->SetFloat(SLIDER_SEGMENTS_DIV * newVal);
             cfgRadarRectY->Clamp(0.05f, 1.0f);
             RadarRect.y = cfgRadarRectY->GetFloat();
             break;
@@ -478,15 +480,15 @@ extern "C" void OnAllModsLoaded()
     {
         ToggleRadarOutline(false); // default
 
-        cfgRadarRectX   = cfg->Bind("RadarRectX", 1.0f);         if(cfgRadarRectX->LoadedUndefault())   OnRadarSettingChange(100 * 1.0f, cfgRadarRectX->GetFloat() * 100, SETID_RECTX);
-        cfgRadarRectY   = cfg->Bind("RadarRectY", 1.0f);         if(cfgRadarRectY->LoadedUndefault())   OnRadarSettingChange(100 * 1.0f, cfgRadarRectY->GetFloat() * 100, SETID_RECTY);
+        cfgRadarRectX   = cfg->Bind("RadarRectX", 1.0f);         if(cfgRadarRectX->LoadedUndefault())   OnRadarSettingChange(SLIDER_SEGMENTS * 1.0f, cfgRadarRectX->GetFloat() * SLIDER_SEGMENTS, SETID_RECTX);
+        cfgRadarRectY   = cfg->Bind("RadarRectY", 1.0f);         if(cfgRadarRectY->LoadedUndefault())   OnRadarSettingChange(SLIDER_SEGMENTS * 1.0f, cfgRadarRectY->GetFloat() * SLIDER_SEGMENTS, SETID_RECTY);
         cfgRadarOutline = cfg->Bind("RadarOutline", false);      if(cfgRadarOutline->LoadedUndefault()) OnRadarSettingChange(false, true, SETID_OUTLINE);
         cfgRadarShape   = cfg->Bind("RadarShape", SHAPE_CIRCLE); if(cfgRadarShape->LoadedUndefault())   OnRadarSettingChange(0, cfgRadarShape->GetInt(), SETID_SHAPE);
 
         if(sautils)
         {
-            sautils->AddSliderItem(eTypeOfSettings::SetType_Game, "RADAR RECT X SCALE", 100 * cfgRadarRectX->GetFloat(), 100 * 0.05f, 100 * 1.0f, OnRadarSettingChange, OnRadarScaleDraw, SETID_RECTX);
-            sautils->AddSliderItem(eTypeOfSettings::SetType_Game, "RADAR RECT Y SCALE", 100 * cfgRadarRectY->GetFloat(), 100 * 0.05f, 100 * 1.0f, OnRadarSettingChange, OnRadarScaleDraw, SETID_RECTY);
+            sautils->AddSliderItem(eTypeOfSettings::SetType_Game, "RADAR RECT X SCALE", SLIDER_SEGMENTS * cfgRadarRectX->GetFloat(), SLIDER_SEGMENTS * 0.05f, SLIDER_SEGMENTS * 1.0f, OnRadarSettingChange, OnRadarScaleDraw, SETID_RECTX);
+            sautils->AddSliderItem(eTypeOfSettings::SetType_Game, "RADAR RECT Y SCALE", SLIDER_SEGMENTS * cfgRadarRectY->GetFloat(), SLIDER_SEGMENTS * 0.05f, SLIDER_SEGMENTS * 1.0f, OnRadarSettingChange, OnRadarScaleDraw, SETID_RECTY);
 
             sautils->AddClickableItem(eTypeOfSettings::SetType_Game, "DISPLAY RADAR OUTLINE", cfgRadarOutline->GetInt() != 0, 0, sizeofA(aYesNo)-1, aYesNo, OnRadarSettingChange, SETID_OUTLINE);
             sautils->AddClickableItem(eTypeOfSettings::SetType_Game, "DISPLAY RADAR SHAPE", cfgRadarShape->GetInt(), 0, sizeofA(aShapes)-1, aShapes, OnRadarSettingChange, SETID_SHAPE);
