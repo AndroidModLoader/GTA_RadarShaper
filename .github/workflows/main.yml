@@ -12,7 +12,7 @@ jobs:
     steps:
 
     - name: Checkout repository...
-      uses: actions/checkout@v3
+      uses: actions/checkout@v5
 
     - name: Download AndroidModLoader`s mod template...
       uses: wei/wget@v1
@@ -30,7 +30,7 @@ jobs:
         args: -O ./isautils.h https://github.com/AndroidModLoader/SAUtils/raw/main/isautils.h
 
     - name: Install Android NDK (r24)...
-      uses: nttld/setup-ndk@v1.2.0
+      uses: nttld/setup-ndk@v1
       with:
         ndk-version: r24
         local-cache: true
@@ -39,7 +39,7 @@ jobs:
       run: ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk NDK_DEBUG=0 -j4
 
     - name: Upload the mod!
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v5
       with:
         name: compiled-mod.zip
         path: ./libs
